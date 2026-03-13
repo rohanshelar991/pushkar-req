@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Toggle Form (Next.js + Firebase + Gemini)
 
-## Getting Started
+Modern App Router build that lets users fill a 10-field form manually or via an AI chatbot, persisting submissions in Firebase Firestore and exposing an `/admin` dashboard.
 
-First, run the development server:
+## Quick start
+1. Install deps: `npm install`
+2. Copy `.env.example` to `.env.local` and fill Firebase + Gemini keys.
+3. Run dev server: `npm run dev` then open http://localhost:3000
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Environment variables
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+GEMINI_API_KEY=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
+- Toggle between **Manual** form and **AI Chatbot** (Gemini 1.5 Flash) that asks questions, extracts JSON, and auto-fills the form.
+- Firestore writes with server timestamps; success messaging for users.
+- Admin dashboard at `/admin` listing latest submissions with key fields.
+- Tailwind CSS v4 styling with expressive typography and gradients.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Structure
+- `src/app/page.tsx` — main UI with toggle, manual form, chat flow.
+- `src/app/admin/page.tsx` — admin table view of Firestore entries.
+- `src/app/api/ai/route.ts` — server route proxying to Gemini, returning structured JSON.
+- `src/lib/firebase.ts` — Firebase app + Firestore init.
+- `src/lib/firestore.ts` — helper functions to save/fetch submissions.
+- `src/components/*` — UI components for toggle, manual form, chatbot.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Firebase
+Create a Web app in your Firebase project, enable Firestore, and plug the config values into `.env.local`. Ensure Firestore rules allow reads/writes for your use case (for demos you can start in test mode).
 
-## Learn More
+## Gemini
+Set `GEMINI_API_KEY` to your Gemini API key. The server route keeps the key off the client; the chat component calls `/api/ai` with the conversation transcript and receives structured fields.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Admin page
+Navigate to `/admin` while logged in (no auth added for brevity). Table is client-side and orders by `createdAt` descending.
