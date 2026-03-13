@@ -68,7 +68,7 @@ export function ChatAssistant({ onFormUpdate, form, onComplete }: Props) {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const nextMessages = [
+    const nextMessages: ChatMessage[] = [
       ...messages,
       { role: "user", content: input.trim() },
       {
