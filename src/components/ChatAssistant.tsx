@@ -70,9 +70,9 @@ export function ChatAssistant({ onFormUpdate, form, onComplete }: Props) {
 
     const nextMessages: ChatMessage[] = [
       ...messages,
-      { role: "user", content: input.trim() },
+      { role: "user" as const, content: input.trim() },
       {
-        role: "assistant",
+        role: "assistant" as const,
         content: `Processing that...${currentPrompt ? "" : " wrapping up."}`,
       },
     ];
